@@ -288,7 +288,7 @@ export default function StoreScene({ onSelect }) {
     window.addEventListener('store-nudge', moveView)
     return () => window.removeEventListener('store-nudge', moveView)
   }, [])
-  return <Canvas shadows camera={{ position: [0, 1.8, 10.8], fov: 58, near: .1, far: 80 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}>
-    <Suspense fallback={null}><Store onSelect={onSelect} /><OrbitControls ref={controls} makeDefault target={[0, 1.65, -4.8]} minDistance={3} maxDistance={19} minPolarAngle={.75} maxPolarAngle={1.48} enableDamping dampingFactor={.075} maxAzimuthAngle={.72} minAzimuthAngle={-.72} /></Suspense>
+  return <Canvas shadows camera={{ position: [0, 1.75, 9.2], fov: 50, near: .1, far: 80 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}>
+    <Suspense fallback={null}><Store onSelect={onSelect} /><OrbitControls ref={controls} makeDefault target={[0, 1.55, -4.4]} minDistance={3} maxDistance={19} minPolarAngle={.75} maxPolarAngle={1.48} enableDamping dampingFactor={.075} maxAzimuthAngle={.72} minAzimuthAngle={-.72} /></Suspense>
   </Canvas>
 }
