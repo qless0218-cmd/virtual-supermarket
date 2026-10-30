@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { ContactShadows, Html, OrbitControls, Text } from '@react-three/drei'
+import { ContactShadows, OrbitControls, RoundedBox, Text } from '@react-three/drei'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { products } from './store'
@@ -12,34 +12,109 @@ function Box({ position, size, color, ...props }) {
   return <mesh position={position} castShadow receiveShadow {...props}><boxGeometry args={size} /><meshStandardMaterial color={color} roughness={0.76} /></mesh>
 }
 
+function ProductPack({ product, id }) {
+  const trim = product.color
+  const label = <>
+    <RoundedBox args={[.2, .18, .018]} radius={.018} smoothness={2} position={[0, -.02, .145]}>
+      <meshStandardMaterial color="#f4ecd8" roughness={.58} />
+    </RoundedBox>
+    <Box position={[0, .045, .157]} size={[.14, .024, .012]} color={trim} />
+    <Box position={[0, -.075, .157]} size={[.12, .012, .012]} color="#b9a987" />
+  </>
+
+  if (product.id === 'avocado' || product.id === 'tomatoes' || product.id === 'berries') {
+    const fruitColor = product.id === 'avocado' ? '#5d713b' : product.id === 'tomatoes' ? '#d54b3d' : '#5265a0'
+    return <group>
+      {[[-.08, .04, 0], [.06, .09, -.035], [.015, -.08, .018]].map((p, i) => <mesh key={i} position={p} scale={product.id === 'avocado' ? [.72, 1, .68] : [1, .9, .85]} castShadow>
+        <sphereGeometry args={[.13 + i * .006, 18, 14]} />
+        <meshStandardMaterial color={fruitColor} roughness={product.id === 'berries' ? .34 : .76} />
+      </mesh>)}
+      {product.id !== 'berries' && <mesh position={[.05, .2, -.03]} rotation={[.2, .1, .3]}><coneGeometry args={[.025, .09, 5]} /><meshStandardMaterial color="#536344" roughness={.88} /></mesh>}
+    </group>
+  }
+
+  if (product.id === 'sourdough') return <group>
+    <mesh position={[0, .03, 0]} rotation={[0, 0, -.08]} scale={[1, .72, .7]} castShadow><sphereGeometry args={[.24, 20, 14]} /><meshStandardMaterial color="#b7814e" roughness={.88} /></mesh>
+    <mesh position={[0, .11, .01]} rotation={[0, 0, -.08]} scale={[.76, .12, .4]}><sphereGeometry args={[.2, 18, 12]} /><meshStandardMaterial color="#d2aa72" roughness={.92} /></mesh>
+    {[-.06, .01, .08].map((x, i) => <mesh key={i} position={[x, .19, .03]} rotation={[0, 0, -.25]}><boxGeometry args={[.012, .1, .06]} /><meshStandardMaterial color="#e9d2aa" /></mesh>)}
+  </group>
+
+  if (product.id === 'croissant') return <group rotation={[0, .15, .05]}>
+    {[-.11, 0, .11].map((x, i) => <mesh key={i} position={[x, .02 + (i === 1 ? .025 : 0), 0]} rotation={[0, 0, (i - 1) * .18]} scale={[.75, 1, .65]} castShadow>
+      <sphereGeometry args={[.16, 18, 14]} /><meshStandardMaterial color={i === 1 ? '#dfa858' : '#c78b43'} roughness={.68} />
+    </mesh>)}
+  </group>
+
+  if (product.id === 'eggs') return <group>
+    <RoundedBox args={[.42, .12, .29]} radius={.035} smoothness={3} position={[0, -.09, 0]} castShadow><meshStandardMaterial color="#bca777" roughness={.87} /></RoundedBox>
+    {[-.11, 0, .11].map((x, i) => <mesh key={i} position={[x, .03, 0]} scale={[.72, 1, .75]} castShadow><sphereGeometry args={[.085, 16, 12]} /><meshStandardMaterial color={i === 1 ? '#f1e8d3' : '#e7d7b5'} roughness={.38} /></mesh>)}
+  </group>
+
+  if (product.id === 'milk') return <group>
+    <RoundedBox args={[.32, .4, .25]} radius={.028} smoothness={3} position={[0, .01, 0]} castShadow><meshStandardMaterial color="#eef0e9" roughness={.4} /></RoundedBox>
+    <mesh position={[0, .235, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[.18, .1, 4]} /><meshStandardMaterial color="#94b5be" roughness={.56} /></mesh>
+    {label}
+  </group>
+
+  if (product.id === 'yogurt' || product.id === 'coffee' || product.id === 'chocolate' || product.id === 'pasta') {
+    const bag = product.id === 'coffee' || product.id === 'pasta'
+    const bar = product.id === 'chocolate'
+    if (bar || bag) return <group>
+      <RoundedBox args={[bar ? .33 : .3, bar ? .42 : .4, .16]} radius={bar ? .025 : .06} smoothness={3} position={[0, .01, 0]} castShadow>
+        <meshStandardMaterial color={bar ? '#5a342d' : trim} roughness={bar ? .28 : .83} metalness={bar ? .04 : 0} />
+      </RoundedBox>
+      <RoundedBox args={[.23, .19, .018]} radius={.02} smoothness={2} position={[0, .01, .095]}><meshStandardMaterial color={bar ? '#d6b36c' : '#efe4c7'} roughness={.58} /></RoundedBox>
+      <Box position={[0, .085, .107]} size={[.16, .026, .012]} color={bar ? '#754538' : '#667a49'} />
+      <Box position={[0, -.075, .107]} size={[.11, .012, .012]} color="#c2ac80" />
+    </group>
+    return <group>
+      <mesh position={[0, -.01, 0]} castShadow><cylinderGeometry args={[.17, .15, .28, 20]} /><meshStandardMaterial color="#f1eee6" roughness={.32} /></mesh>
+      <mesh position={[0, .145, 0]}><cylinderGeometry args={[.18, .18, .035, 20]} /><meshStandardMaterial color={trim} roughness={.35} /></mesh>
+      <RoundedBox args={[.21, .13, .018]} radius={.018} smoothness={2} position={[0, -.01, .155]}><meshStandardMaterial color="#f4ecd8" /></RoundedBox>
+      <Box position={[0, .025, .166]} size={[.16, .023, .012]} color={trim} />
+    </group>
+  }
+
+  // Olive oil and kombucha are glass bottles with a foil cap and paper label.
+  const amber = product.id === 'kombucha'
+  return <group>
+    <mesh position={[0, -.045, 0]} castShadow>
+      <cylinderGeometry args={[.13, .145, .29, 20]} />
+      <meshPhysicalMaterial color={amber ? '#9b572e' : '#586b37'} roughness={.24} metalness={.04} clearcoat={.38} clearcoatRoughness={.25} />
+    </mesh>
+    <mesh position={[0, .14, 0]} castShadow><cylinderGeometry args={[.065, .09, .12, 16]} /><meshPhysicalMaterial color={amber ? '#9b572e' : '#586b37'} roughness={.22} clearcoat={.4} /></mesh>
+    <mesh position={[0, .225, 0]}><cylinderGeometry args={[.07, .07, .065, 16]} /><meshStandardMaterial color={amber ? '#d5b56c' : '#c3a95d'} roughness={.32} metalness={.38} /></mesh>
+    {label}
+  </group>
+}
+
 function ShelfUnit({ x, onSelect }) {
   const shelves = [0.55, 1.28, 2.02]
-  const items = useMemo(() => Array.from({ length: 40 }, (_, i) => {
+  const items = useMemo(() => Array.from({ length: 72 }, (_, i) => {
     const side = i % 2 ? 1 : -1
     const row = Math.floor(i / 2)
     const level = row % 3
     const slot = Math.floor(row / 3)
     const product = productOrder[(slot + level * 2 + Math.round((x + 5) * 2)) % productOrder.length]
-    const z = -6.25 + slot * 0.68
-    const varied = (i % 5) * 0.025
-    return { side, level, z, product, varied, id: `${x}-${i}` }
+    const z = -4.7 + slot * 0.85
+    return { side, level, z, product, id: `${x}-${i}` }
   }), [x])
   return <group position={[x, 0, 0]}>
     <Box position={[0, .18, 0]} size={[1.45, .32, 11.5]} color="#77634f" />
+    <Box position={[0, 1.38, -.35]} size={[.055, 2.52, 11.3]} color="#687569" />
     {[-.57, .57].map(side => <group key={side}>
       {shelves.map(y => <group key={y}>
-        <Box position={[side * .65, y, -0.35]} size={[.11, .11, 11.35]} color={wood} />
-        <Box position={[side * .70, y + .13, -0.35]} size={[.035, .04, 11.35]} color="#dac9a8" />
+        <Box position={[side * .65, y, -0.35]} size={[.12, .12, 11.35]} color={wood} />
+        <Box position={[side * .71, y + .035, -0.35]} size={[.03, .12, 11.35]} color="#efe8d9" />
+        {Array.from({ length: 11 }, (_, i) => <Box key={i} position={[side * .73, y + .04, -4.95 + i * .92]} size={[.018, .085, .34]} color={i % 4 === 0 ? '#e4d6b5' : '#fbf8ef'} />)}
       </group>)}
       <Box position={[side * .63, 1.76, -6.06]} size={[.16, 2.05, .18]} color={steel} />
       <Box position={[side * .63, 1.76, 5.35]} size={[.16, 2.05, .18]} color={steel} />
     </group>)}
-    {items.map(({ side, level, z, product, varied, id }) => {
-      const y = shelves[level] + .3
-      const cylinder = id.charCodeAt(id.length - 1) % 4 === 0
+    {items.map(({ side, level, z, product, id }) => {
+      const y = shelves[level] + .35
       return <group key={id} position={[side * .55, y, z]} onClick={e => { e.stopPropagation(); onSelect(product) }} onPointerOver={e => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = '' }}>
-        {cylinder ? <mesh castShadow position={[0, .12, 0]}><cylinderGeometry args={[.13, .13, .38, 14]} /><meshStandardMaterial color={product.color} roughness={.42} /></mesh> : <Box position={[0, .12, 0]} size={[.24 + varied, .35 + varied, .23]} color={product.color} />}
-        <mesh position={[0, .125, cylinder ? .133 : .117]}><planeGeometry args={[.14, .16]} /><meshBasicMaterial color="#fff9e9" /></mesh>
+        <group scale={.82}><ProductPack product={product} id={id} /></group>
       </group>
     })}
   </group>
@@ -72,25 +147,27 @@ function Checkout() {
 
 function Ceiling() {
   return <group>
-    {Array.from({ length: 9 }, (_, i) => <Box key={`beam${i}`} position={[-11, 5.9, -10 + i * 2.5]} size={[22, .12, .12]} color="#e5e1d7" />)}
-    {[-10, -5, 0, 5, 10].map(x => <Box key={`cross${x}`} position={[x, 5.9, 0]} size={[.11, .12, 22]} color="#dedbd1" />)}
+      {Array.from({ length: 9 }, (_, i) => <Box key={`beam${i}`} position={[-11, 5.9, -10 + i * 2.5]} size={[22, .16, .16]} color="#c9c4b8" />)}
+    {[-10, -5, 0, 5, 10].map(x => <Box key={`cross${x}`} position={[x, 5.9, 0]} size={[.16, .16, 22]} color="#c9c4b8" />)}
     {[-8, -4, 0, 4, 8].flatMap(x => [-7, -1, 5].map(z => <group key={`light${x}${z}`} position={[x, 5.78, z]}>
-      <Box position={[0, 0, 0]} size={[2.6, .05, .42]} color="#fffdf2" />
-      <pointLight position={[0, -.25, 0]} intensity={9} distance={7} color="#fff4da" />
+      <Box position={[0, 0, 0]} size={[2.6, .08, .5]} color="#f7eedb" />
+      <Box position={[0, -.055, 0]} size={[2.24, .012, .33]} color="#fff8e8" />
+      <pointLight position={[0, -.25, 0]} intensity={1.35} distance={6.5} color="#fff0d2" />
     </group>))}
   </group>
 }
 
 function Store({ onSelect }) {
   return <>
-    <color attach="background" args={['#eae8df']} />
-    <fog attach="fog" args={['#eae8df', 18, 38]} />
-    <ambientLight intensity={1.35} />
-    <directionalLight position={[-4, 9, 7]} intensity={2.3} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-16} shadow-camera-right={16} shadow-camera-top={14} shadow-camera-bottom={-14} />
+    <color attach="background" args={['#d7d6ce']} />
+    <fog attach="fog" args={['#d7d6ce', 21, 42]} />
+    <hemisphereLight args={['#f3f1e9', '#857d6d', .72]} />
+    <ambientLight intensity={.45} />
+    <directionalLight position={[-7, 8, 6]} intensity={1.05} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-16} shadow-camera-right={16} shadow-camera-top={14} shadow-camera-bottom={-14} shadow-bias={-.00018} shadow-radius={5} />
     <group>
-      <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#d7d2c7" roughness={.86} /></mesh>
-      {Array.from({ length: 13 }, (_, i) => <Box key={`tile${i}`} position={[0, .006, -11.5 + i * 1.9]} size={[23.8, .012, .018]} color="#c8c1b5" />)}
-      {Array.from({ length: 13 }, (_, i) => <Box key={`tilex${i}`} position={[-11.5 + i * 1.9, .006, 0]} size={[.018, .012, 25.8]} color="#c8c1b5" />)}
+      <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#b8b4aa" roughness={.7} /></mesh>
+      {Array.from({ length: 13 }, (_, i) => <Box key={`tile${i}`} position={[0, .006, -11.5 + i * 1.9]} size={[23.8, .012, .022]} color="#aaa59a" />)}
+      {Array.from({ length: 13 }, (_, i) => <Box key={`tilex${i}`} position={[-11.5 + i * 1.9, .006, 0]} size={[.022, .012, 25.8]} color="#aaa59a" />)}
       <Box position={[0, 3.25, -12.6]} size={[24, 6.6, .35]} color="#f1eee6" />
       <Box position={[-12, 3.25, 0]} size={[.32, 6.5, 26]} color="#f1eee6" />
       <Box position={[12, 3.25, 0]} size={[.32, 6.5, 26]} color="#f1eee6" />
