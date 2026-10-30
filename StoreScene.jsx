@@ -90,13 +90,13 @@ function ProductPack({ product, id }) {
 
 function ShelfUnit({ x, onSelect }) {
   const shelves = [0.55, 1.28, 2.02]
-  const items = useMemo(() => Array.from({ length: 72 }, (_, i) => {
+  const items = useMemo(() => Array.from({ length: 204 }, (_, i) => {
     const side = i % 2 ? 1 : -1
     const row = Math.floor(i / 2)
     const level = row % 3
     const slot = Math.floor(row / 3)
     const product = productOrder[(slot + level * 2 + Math.round((x + 5) * 2)) % productOrder.length]
-    const z = -4.7 + slot * 0.85
+    const z = -5.3 + slot * .315
     return { side, level, z, product, id: `${x}-${i}` }
   }), [x])
   return <group position={[x, 0, 0]}>
@@ -112,9 +112,9 @@ function ShelfUnit({ x, onSelect }) {
       <Box position={[side * .63, 1.76, 5.35]} size={[.16, 2.05, .18]} color={steel} />
     </group>)}
     {items.map(({ side, level, z, product, id }) => {
-      const y = shelves[level] + .35
+      const y = shelves[level] + .29
       return <group key={id} position={[side * .55, y, z]} onClick={e => { e.stopPropagation(); onSelect(product) }} onPointerOver={e => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = '' }}>
-        <group scale={.82}><ProductPack product={product} id={id} /></group>
+        <group scale={.68}><ProductPack product={product} id={id} /></group>
       </group>
     })}
   </group>
@@ -131,6 +131,56 @@ function ProduceIsland({ onSelect }) {
     </group>)}
     <Box position={[0, 1.2, -1.36]} size={[2.15, .56, .08]} color="#e4efe2" />
     <Text position={[0, 1.2, -1.30]} fontSize={.22} color="#315c3e" anchorX="center" anchorY="middle" fontWeight={700}>FRESH TODAY</Text>
+  </group>
+}
+
+function ProduceWall({ onSelect }) {
+  const sections = [
+    { label: 'APPLES', color: '#bd4335', product: products[0] },
+    { label: 'CITRUS', color: '#e6a33f', product: products[1] },
+    { label: 'PEARS', color: '#8ba348', product: products[0] },
+    { label: 'TOMATOES', color: '#d8503c', product: products[1] },
+    { label: 'GREENS', color: '#56814a', product: products[0] },
+    { label: 'BERRIES', color: '#586397', product: products[2] },
+  ]
+  return <group position={[0, 0, -10.3]}>
+    <Box position={[0, 1.5, -.52]} size={[11.1, 3.0, .65]} color="#303a35" />
+    {[.55, 1.35, 2.15].map(y => <Box key={y} position={[0, y, -.05]} size={[10.75, .09, 1.05]} color="#ba9467" />)}
+    {sections.map((section, index) => {
+      const x = -4.45 + index * 1.78
+      return <group key={section.label}>
+        {[.82, 1.62, 2.42].map((y, row) => <group key={y}>
+          <Box position={[x, y - .14, .15]} size={[1.68, .3, .95]} color={row === 1 ? '#b18d64' : '#987650'} />
+          {Array.from({ length: 8 }, (_, n) => <mesh key={n} position={[x - .65 + (n % 4) * .42, y + .08 + (Math.floor(n / 4) * .09), .47 + (n % 2) * .15]} scale={[1, .9, .82]} castShadow onClick={() => onSelect(section.product)}>
+            <sphereGeometry args={[.18, 16, 12]} /><meshStandardMaterial color={section.color} roughness={.56} />
+          </mesh>)}
+        </group>)}
+        <Text position={[x, .38, .71]} fontSize={.12} color="#fff7e5" anchorX="center" anchorY="middle" fontWeight={700}>{section.label}</Text>
+      </group>
+    })}
+    <Box position={[0, 3.48, .12]} size={[7.2, .78, .2]} color="#315c3e" />
+    <Text position={[0, 3.5, .24]} fontSize={.46} color="#fff9e8" anchorX="center" anchorY="middle" fontWeight={800}>FRESH PRODUCE</Text>
+  </group>
+}
+
+function ShoppingCart() {
+  return <group position={[0, 0, 8.25]} rotation={[0, Math.PI, 0]}>
+    {/* front rail and basket mouth */}
+    <mesh position={[0, .71, .04]} castShadow><boxGeometry args={[2.25, .11, .12]} /><meshStandardMaterial color="#c51f2a" roughness={.31} /></mesh>
+    {[-.91, .91].map(x => <group key={x}>
+      <mesh position={[x, .79, -.47]}><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /><boxGeometry args={[.055, .58, .055]} /></mesh>
+      <mesh position={[x, .5, -.93]}><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /><boxGeometry args={[.045, .42, .045]} /></mesh>
+      <mesh position={[x, .27, -.93]}><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /><cylinderGeometry args={[.055, .055, .1, 16]} /></mesh>
+    </group>)}
+    {[-.88, -.55, -.22, .11, .44, .77].map((z, i) => <mesh key={`wire${i}`} position={[0, .82 - i * .045, z]}><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /><boxGeometry args={[1.92, .022, .018]} /></mesh>)}
+    {[-.82, -.48, -.14, .2, .54, .82].map((x, i) => <mesh key={`wirex${i}`} position={[x, .68, -.47]}><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /><boxGeometry args={[.018, .48, 1.12]} /></mesh>)}
+    {[-.9, .9].map(x => <mesh key={`handle${x}`} position={[x, .67, .52]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[.045, .045, .78, 16]} /><meshStandardMaterial color="#d31e2c" roughness={.3} /></mesh>)}
+    <mesh position={[0, .64, .52]}><boxGeometry args={[1.8, .11, .11]} /><meshStandardMaterial color="#d31e2c" roughness={.3} /></mesh>
+    <mesh position={[0, .18, -.12]}><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /><boxGeometry args={[1.45, .045, 1.55]} /></mesh>
+    {[-.72, .72].map(x => [-.7, .38].map(z => <group key={`${x}-${z}`} position={[x, .13, z]}>
+      <mesh rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[.15, .15, .08, 20]} /><meshStandardMaterial color="#293238" roughness={.68} /></mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[.055, .055, .085, 16]} /><meshStandardMaterial color="#aeb6b5" metalness={.72} roughness={.29} /></mesh>
+    </group>))}
   </group>
 }
 
@@ -190,7 +240,7 @@ function Store({ onSelect }) {
     <ambientLight intensity={.45} />
     <directionalLight position={[-7, 8, 6]} intensity={.72} />
     <group>
-      <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#aaa9a3" roughness={.27} metalness={.08} /></mesh>
+      <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#aaa9a3" roughness={.17} metalness={.12} /></mesh>
       {Array.from({ length: 13 }, (_, i) => <Box key={`tile${i}`} position={[0, .006, -11.5 + i * 1.9]} size={[23.8, .012, .018]} color="#96958f" />)}
       {Array.from({ length: 13 }, (_, i) => <Box key={`tilex${i}`} position={[-11.5 + i * 1.9, .006, 0]} size={[.018, .012, 25.8]} color="#96958f" />)}
       <Box position={[0, 3.25, -12.6]} size={[24, 6.6, .35]} color="#f1eee6" />
@@ -203,8 +253,9 @@ function Store({ onSelect }) {
       <Ceiling />
       <ColdAisle />
       {[-3.8, 3.8].map(x => <ShelfUnit key={x} x={x} onSelect={onSelect} />)}
+      <ProduceWall onSelect={onSelect} />
       <ProduceIsland onSelect={onSelect} />
-      <Checkout />
+      <ShoppingCart />
       {[-3.8, 3.8].map((x, i) => <group key={`aisle${x}`} position={[x, 3.05, -7.1]}>
         <Box position={[0, 0, 0]} size={[1.65, .55, .08]} color={['#d8bb72', '#c96c54', '#718c73'][i]} />
         <Text position={[0, 0, .055]} fontSize={.26} color="#fffdf3" anchorX="center" anchorY="middle" fontWeight={700}>0{i + 1}</Text>
