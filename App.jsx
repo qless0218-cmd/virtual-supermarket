@@ -1,8 +1,7 @@
-import { Suspense, lazy, useMemo, useState } from 'react'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, ChevronDown, CircleHelp, Clock3, Compass, Heart, MapPin, Minus, Plus, Search, ShoppingBag, Sparkles, X } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, CircleHelp, Clock3, Compass, Heart, MapPin, Minus, Plus, Search, ShoppingBag, Sparkles, X } from 'lucide-react'
 import { categories, money, products } from './store.js'
-
-const StoreScene = lazy(() => import('./StoreScene.jsx'))
+import referenceStore from './reference-store.jpeg'
 
 function App() {
   const [activeCategory, setActiveCategory] = useState('all')
@@ -46,8 +45,8 @@ function App() {
       </div>
     </header>
 
-    <section className="market-view" id="top">
-      <div className="scene-wrap"><Suspense fallback={<div className="scene-loading"><span className="loading-mark">✳</span><strong>Opening the doors…</strong></div>}><StoreScene onSelect={setSelected} /></Suspense></div>
+    <section className="market-view reference-scene" id="top">
+      <div className="scene-wrap reference-photo" style={{ '--reference-store-image': `url(${referenceStore})` }} role="img" aria-label="Photo-real supermarket aisle with stocked shelves, fresh produce and a shopping trolley" />
       <div className="scene-wash" />
 
       <aside className="category-rail">
@@ -75,8 +74,6 @@ function App() {
         <button className="browse-aisles" onClick={() => { setActiveCategory('all'); setSearch(''); setOnlyPopular(false) }}><Compass size={17} /><span>Keep exploring the store</span><ArrowUpRight size={15} /></button>
       </section>
 
-      <div className="store-caption"><span className="caption-line" /><div><strong>YOUR STORE, IN 3D</strong><span>Drag to look around · scroll to explore</span></div></div>
-      <div className="scene-controls"><button title="Move view up" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'up' }))}><ArrowUpRight size={16} /></button><div><button title="Move left" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'left' }))}><ArrowLeft size={15} /></button><button title="Move down" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'down' }))}><ArrowDown size={15} /></button><button title="Move right" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'right' }))}><ArrowRight size={15} /></button></div></div>
       {itemCount > 0 && <button className="floating-basket" onClick={() => setCartOpen(true)}><ShoppingBag size={17} /><span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span><strong>{money(subtotal)}</strong><ArrowUpRight size={15} /></button>}
     </section>
 

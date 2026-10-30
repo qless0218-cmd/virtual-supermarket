@@ -1,0 +1,18 @@
+.reference-scene .scene-wrap.reference-photo {
+  background-color: #343a38;
+  background-image: var(--reference-store-image);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.reference-scene .scene-wash {
+  display: none;
+}
+
+@media (min-aspect-ratio: 1.6/1) {
+  .reference-scene .scene-wrap.reference-photo {
+    background-size: auto 100%;
+    background-color: #353b38;
+  }
+}
