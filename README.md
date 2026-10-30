@@ -1,14 +1,15 @@
 # Market Lane — Virtual Supermarket
 
-A grocery browsing frontend built with React and Vite. The store view uses the supermarket reference image supplied for this project. Product categories, search, product details, favourites, and the basket are interactive.
+A walkable 3D supermarket shopping experience built with React, Three.js, React Three Fiber and Vite. The reference image guides the aisle composition; the store itself is rendered as a live 3D scene.
 
 ## Current milestone
 
-- Display the supplied supermarket aisle image as the store backdrop.
-- Browse product categories, search the catalogue, save favourites, open product details, and manage a basket.
-- Adapt the shopping controls for desktop and mobile screens.
+- Explore a 3D grocery store with shelves, products, produce, chilled cases, aisle signs, ceiling lights, floor tiles and a shopping trolley.
+- Use the Start walking button and WASD/arrow keys; move the mouse to look around. Touch users can use the on-screen direction pad.
+- Select products in the 3D scene or browse categories, search, view details, save favourites and manage the live basket.
+- Responsive desktop and mobile shopping controls.
 
-The store view is a still image, not a walkable 3D scene. Checkout is a placeholder; there is no backend, database, account system, payment processing, or admin dashboard yet.
+Checkout is a placeholder; there is no backend, database, account system, payment processing, or admin dashboard yet.
 
 ## Run locally
 

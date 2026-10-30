@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
-import { ContactShadows, OrbitControls, RoundedBox, Text } from '@react-three/drei'
+import { ContactShadows, PointerLockControls, RoundedBox, Text } from '@react-three/drei'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { products } from './store'
 
@@ -267,28 +268,59 @@ function Store({ onSelect }) {
   </>
 }
 
-export default function StoreScene({ onSelect }) {
-  const controls = useRef()
+function WalkControls({ onSelect }) {
+  const keys = useRef({})
+  const { camera } = useThree()
   useEffect(() => {
+    const validKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+    const down = event => { if (validKeys.includes(event.code)) { keys.current[event.code] = true; event.preventDefault() } }
+    const up = event => { if (validKeys.includes(event.code)) keys.current[event.code] = false }
+    const clear = () => { keys.current = {} }
     const moveView = event => {
-      if (!controls.current) return
-      const { camera, target } = controls.current
-      const direction = new THREE.Vector3().subVectors(target, camera.position)
-      direction.y = 0
-      direction.normalize()
+      const forward = new THREE.Vector3()
+      camera.getWorldDirection(forward); forward.y = 0; forward.normalize()
+      const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize()
       const shift = new THREE.Vector3()
-      if (event.detail === 'up') shift.copy(direction).multiplyScalar(1.15)
-      if (event.detail === 'down') shift.copy(direction).multiplyScalar(-1.15)
-      if (event.detail === 'left') shift.set(-1.15, 0, 0)
-      if (event.detail === 'right') shift.set(1.15, 0, 0)
-      camera.position.add(shift)
-      target.add(shift)
-      controls.current.update()
+      if (event.detail === 'up') shift.copy(forward)
+      if (event.detail === 'down') shift.copy(forward).negate()
+      if (event.detail === 'left') shift.copy(right).negate()
+      if (event.detail === 'right') shift.copy(right)
+      camera.position.addScaledVector(shift, 1.1)
+      camera.position.x = THREE.MathUtils.clamp(camera.position.x, -10.8, 10.8)
+      camera.position.z = THREE.MathUtils.clamp(camera.position.z, -11.7, 11.8)
+      camera.position.y = 1.68
     }
+    window.addEventListener('keydown', down)
+    window.addEventListener('keyup', up)
+    window.addEventListener('blur', clear)
     window.addEventListener('store-nudge', moveView)
-    return () => window.removeEventListener('store-nudge', moveView)
-  }, [])
+    return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', clear); window.removeEventListener('store-nudge', moveView) }
+  }, [camera])
+  useFrame((_, delta) => {
+    const state = keys.current
+    const forward = new THREE.Vector3()
+    camera.getWorldDirection(forward); forward.y = 0; forward.normalize()
+    const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize()
+    const x = Number(state.KeyD || state.ArrowRight) - Number(state.KeyA || state.ArrowLeft)
+    const z = Number(state.KeyW || state.ArrowUp) - Number(state.KeyS || state.ArrowDown)
+    if (x || z) {
+      const movement = forward.multiplyScalar(z).addScaledVector(right, x).normalize()
+      camera.position.addScaledVector(movement, Math.min(delta, .05) * 3.4)
+      camera.position.x = THREE.MathUtils.clamp(camera.position.x, -10.8, 10.8)
+      camera.position.z = THREE.MathUtils.clamp(camera.position.z, -11.7, 11.8)
+      camera.position.y = 1.68
+    }
+  })
+  return <>
+    <Store onSelect={onSelect} />
+    <PointerLockControls selector="#walk-button" />
+  </>
+}
+
+export function StoreCanvas({ onSelect }) {
   return <Canvas shadows camera={{ position: [0, 1.75, 9.2], fov: 50, near: .1, far: 80 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}>
-    <Suspense fallback={null}><Store onSelect={onSelect} /><OrbitControls ref={controls} makeDefault target={[0, 1.55, -4.4]} minDistance={3} maxDistance={19} minPolarAngle={.75} maxPolarAngle={1.48} enableDamping dampingFactor={.075} maxAzimuthAngle={.72} minAzimuthAngle={-.72} /></Suspense>
+    <Suspense fallback={null}><Store onSelect={onSelect} /><WalkControls /></Suspense>
   </Canvas>
 }
+
+export default StoreCanvas

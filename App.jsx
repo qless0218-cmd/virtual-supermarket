@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, CircleHelp, Clock3, Compass, Heart, MapPin, Minus, Plus, Search, ShoppingBag, Sparkles, X } from 'lucide-react'
+import { lazy, Suspense, useMemo, useState } from 'react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronDown, CircleHelp, Clock3, Compass, Heart, MapPin, Minus, Plus, Search, ShoppingBag, Sparkles, X } from 'lucide-react'
 import { categories, money, products } from './store.js'
-import referenceStore from './reference-store.jpeg'
+
+const StoreScene = lazy(() => import('./StoreScene.jsx'))
 
 function App() {
   const [activeCategory, setActiveCategory] = useState('all')
@@ -45,9 +46,10 @@ function App() {
       </div>
     </header>
 
-    <section className="market-view reference-scene" id="top">
-      <div className="scene-wrap reference-photo" style={{ '--reference-store-image': `url(${referenceStore})` }} role="img" aria-label="Photo-real supermarket aisle with stocked shelves, fresh produce and a shopping trolley" />
+    <section className="market-view" id="top">
+      <div className="scene-wrap"><Suspense fallback={<div className="scene-loading">Opening the store…</div>}><StoreScene onSelect={setSelected} /></Suspense></div>
       <div className="scene-wash" />
+      <button id="walk-button" className="walk-button" aria-label="Start walking in the 3D supermarket"><Compass size={15} /> Start walking <span>WASD</span></button>
 
       <aside className="category-rail">
         <div className="rail-heading"><span>EXPLORE</span><button className={`rail-filter ${onlyPopular ? 'active' : ''}`} onClick={() => setOnlyPopular(value => !value)} title="Show popular picks"><Sparkles size={15} /></button></div>
@@ -58,6 +60,12 @@ function App() {
         </div>
         <div className="rail-note"><span className="note-icon">✳</span><p>Good things are<br /><strong>closer than you think.</strong></p></div>
       </aside>
+
+      <div className="store-caption"><span className="caption-line" /><div><strong>WALK THROUGH THE STORE</strong><span>Click Start walking · WASD to move · mouse to look</span></div></div>
+      <div className="scene-controls" aria-label="Walk controls">
+        <button aria-label="Walk forward" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'up' }))}><ArrowUp size={15} /></button>
+        <div><button aria-label="Walk left" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'left' }))}><ArrowLeft size={15} /></button><button aria-label="Walk backward" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'down' }))}><ArrowDown size={15} /></button><button aria-label="Walk right" onClick={() => window.dispatchEvent(new CustomEvent('store-nudge', { detail: 'right' }))}><ArrowRight size={15} /></button></div>
+      </div>
 
       <section className="browse-panel" aria-label="Shop products">
         <div className="panel-topline"><span><span className="live-dot" /> LIVE STORE</span><button className="panel-minimize" title="Hide product panel" onClick={e => e.currentTarget.closest('.browse-panel').classList.toggle('panel-collapsed')}><ArrowRight size={16} /></button></div>
@@ -89,7 +97,7 @@ function App() {
       {cartItems.length ? <><div className="cart-lines">{cartItems.map(item => <article className="cart-line" key={item.id}><div className="cart-product-art" style={{ '--product-color': item.color }}>{item.emoji}</div><div className="cart-product-copy"><strong>{item.name}</strong><span>{item.detail}</span><b>{money(item.price)}</b></div><div className="qty-control"><button onClick={() => changeQty(item, -1)} aria-label="Remove one"><Minus size={13} /></button><span>{cart[item.id]}</span><button onClick={() => addToCart(item)} aria-label="Add one"><Plus size={13} /></button></div></article>)}</div><div className="cart-summary"><div><span>Subtotal</span><strong>{money(subtotal)}</strong></div><div><span>Delivery</span><strong className="free-delivery">On us today</strong></div><div className="total-row"><span>Total</span><strong>{money(subtotal)}</strong></div><button className="checkout-button" onClick={() => alert('Online checkout is coming in a later milestone. Your basket is saved for this visit.')}>Continue to checkout <ArrowRight size={17} /></button><p>Easy returns · Thoughtful delivery · Always local</p></div></> : <div className="empty-cart"><span>🧺</span><h3>Your basket is taking a little break.</h3><p>Pick something lovely from the shelves and it’ll show up here.</p><button onClick={() => setCartOpen(false)}>Back to the store <ArrowRight size={16} /></button></div>}
     </aside></div>}
 
-    {helpOpen && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setHelpOpen(false) }}><section className="help-modal"><button className="modal-close" onClick={() => setHelpOpen(false)} aria-label="Close"><X size={18} /></button><span className="help-sparkle"><Compass size={22} /></span><div className="eyebrow">MAKE YOURSELF AT HOME</div><h2>Find something lovely.</h2><p>Shop the Market Lane collection from the aisle view.</p><div className="help-steps"><div><span>01</span><p><strong>Browse the shelves</strong>Choose a category or search for a product.</p></div><div><span>02</span><p><strong>See the details</strong>Open an item to view its price and description.</p></div><div><span>03</span><p><strong>Add it to your basket</strong>Use the live basket to review your items and total.</p></div></div><button className="modal-add" onClick={() => setHelpOpen(false)}>Sounds lovely <ArrowRight size={17} /></button></section></div>}
+    {helpOpen && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setHelpOpen(false) }}><section className="help-modal"><button className="modal-close" onClick={() => setHelpOpen(false)} aria-label="Close"><X size={18} /></button><span className="help-sparkle"><Compass size={22} /></span><div className="eyebrow">TAKE A WALK</div><h2>Explore the real 3D store.</h2><p>The supermarket is a live 3D world. The reference image guides its aisle layout.</p><div className="help-steps"><div><span>01</span><p><strong>Start walking</strong>Click the Start walking button above the store.</p></div><div><span>02</span><p><strong>Move and look around</strong>Use W A S D to walk and move your mouse to look. Press Escape to release the mouse.</p></div><div><span>03</span><p><strong>Shop the shelves</strong>Click products in the scene or add them from the product list, then review your basket.</p></div></div><button className="modal-add" onClick={() => setHelpOpen(false)}>Let’s go <ArrowRight size={17} /></button></section></div>}
   </main>
 }
 
