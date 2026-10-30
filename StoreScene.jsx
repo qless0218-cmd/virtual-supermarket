@@ -114,7 +114,7 @@ function ShelfUnit({ x, onSelect }) {
     {items.map(({ side, level, z, product, id }) => {
       const y = shelves[level] + .29
       return <group key={id} position={[side * .55, y, z]} onClick={e => { e.stopPropagation(); onSelect(product) }} onPointerOver={e => { e.stopPropagation(); document.body.style.cursor = 'pointer' }} onPointerOut={() => { document.body.style.cursor = '' }}>
-        <group scale={.68}><ProductPack product={product} id={id} /></group>
+        <group scale={.83}><ProductPack product={product} id={id} /></group>
       </group>
     })}
   </group>
@@ -164,7 +164,7 @@ function ProduceWall({ onSelect }) {
 }
 
 function ShoppingCart() {
-  return <group position={[0, -.12, 6.4]} rotation={[0, Math.PI, 0]} scale={1.22}>
+  return <group position={[0, -.12, 6.4]} scale={1.22}>
     {/* front rail and basket mouth */}
     <mesh position={[0, .71, .04]} castShadow><boxGeometry args={[2.25, .11, .12]} /><meshStandardMaterial color="#c51f2a" roughness={.31} /></mesh>
     {[-.91, .91].map(x => <group key={x}>
