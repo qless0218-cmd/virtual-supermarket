@@ -164,7 +164,7 @@ function ProduceWall({ onSelect }) {
 }
 
 function ShoppingCart() {
-  return <group position={[0, 0, 8.25]} rotation={[0, Math.PI, 0]}>
+  return <group position={[0, -.12, 6.4]} rotation={[0, Math.PI, 0]} scale={1.22}>
     {/* front rail and basket mouth */}
     <mesh position={[0, .71, .04]} castShadow><boxGeometry args={[2.25, .11, .12]} /><meshStandardMaterial color="#c51f2a" roughness={.31} /></mesh>
     {[-.91, .91].map(x => <group key={x}>
