@@ -188,12 +188,13 @@ function Store({ onSelect }) {
     <fog attach="fog" args={['#d7d6ce', 21, 42]} />
     <hemisphereLight args={['#f3f1e9', '#857d6d', .72]} />
     <ambientLight intensity={.45} />
-    <directionalLight position={[-7, 8, 6]} intensity={1.05} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-16} shadow-camera-right={16} shadow-camera-top={14} shadow-camera-bottom={-14} shadow-bias={-.00018} shadow-radius={5} />
+    <directionalLight position={[-7, 8, 6]} intensity={.72} />
     <group>
       <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#aaa9a3" roughness={.27} metalness={.08} /></mesh>
       {Array.from({ length: 13 }, (_, i) => <Box key={`tile${i}`} position={[0, .006, -11.5 + i * 1.9]} size={[23.8, .012, .018]} color="#96958f" />)}
       {Array.from({ length: 13 }, (_, i) => <Box key={`tilex${i}`} position={[-11.5 + i * 1.9, .006, 0]} size={[.018, .012, 25.8]} color="#96958f" />)}
       <Box position={[0, 3.25, -12.6]} size={[24, 6.6, .35]} color="#f1eee6" />
+      <Box position={[0, 6.04, 0]} size={[23.8, .18, 25.8]} color="#363c39" />
       <Box position={[-12, 3.25, 0]} size={[.32, 6.5, 26]} color="#f1eee6" />
       <Box position={[12, 3.25, 0]} size={[.32, 6.5, 26]} color="#f1eee6" />
       <Box position={[0, 2.65, -12.36]} size={[7.6, 1.0, .12]} color="#294b3c" />
