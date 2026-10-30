@@ -10,3 +10,5 @@
 @media(max-height:700px) and (min-width:761px){.panel-intro{padding:10px 0 8px}.panel-intro h1{font-size:29px}.shelf-heading{padding:11px 0 7px}.product-art{height:66px}.product-list{gap:7px}.category-rail{top:16px;bottom:65px}.rail-note{padding:9px}.browse-aisles{height:32px}}
 
 @media(max-width:760px){.walk-button{top:60px}}
+
+.scene-wash{background:linear-gradient(90deg,rgba(248,248,245,.26) 0%,rgba(248,248,245,.15) 17%,transparent 45%,rgba(247,247,243,.12) 100%),linear-gradient(0deg,rgba(250,249,246,.12),transparent 22%)}
