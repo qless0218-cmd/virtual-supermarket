@@ -147,13 +147,38 @@ function Checkout() {
 
 function Ceiling() {
   return <group>
-      {Array.from({ length: 9 }, (_, i) => <Box key={`beam${i}`} position={[-11, 5.9, -10 + i * 2.5]} size={[22, .16, .16]} color="#c9c4b8" />)}
-    {[-10, -5, 0, 5, 10].map(x => <Box key={`cross${x}`} position={[x, 5.9, 0]} size={[.16, .16, 22]} color="#c9c4b8" />)}
-    {[-8, -4, 0, 4, 8].flatMap(x => [-7, -1, 5].map(z => <group key={`light${x}${z}`} position={[x, 5.78, z]}>
-      <Box position={[0, 0, 0]} size={[2.6, .08, .5]} color="#f7eedb" />
-      <Box position={[0, -.055, 0]} size={[2.24, .012, .33]} color="#fff8e8" />
-      <pointLight position={[0, -.25, 0]} intensity={1.35} distance={6.5} color="#fff0d2" />
+    {Array.from({ length: 9 }, (_, i) => <Box key={`beam${i}`} position={[-11, 5.9, -10 + i * 2.5]} size={[22, .16, .16]} color="#323b39" />)}
+    {[-10, -5, 0, 5, 10].map(x => <Box key={`cross${x}`} position={[x, 5.9, 0]} size={[.16, .16, 22]} color="#323b39" />)}
+    {[-7, -2.3, 2.3, 7].flatMap(x => [-7, -1, 5].map(z => <group key={`light${x}${z}`} position={[x, 5.78, z]}>
+      <Box position={[0, 0, 0]} size={[3.4, .08, .28]} color="#515c58" />
+      <Box position={[0, -.055, 0]} size={[3.08, .012, .2]} color="#fff9eb" />
+      <pointLight position={[0, -.25, 0]} intensity={1.05} distance={7} color="#fff2d9" />
     </group>))}
+  </group>
+}
+
+function ColdAisle() {
+  return <group position={[-10.55, 0, -.3]}>
+    <Box position={[0, 2.1, 0]} size={[2.25, 4.2, 12.4]} color="#d6d9d4" />
+    <Box position={[1.12, 2.12, 0]} size={[.06, 4.15, 12.15]} color="#eef4ef" />
+    {Array.from({ length: 6 }, (_, i) => {
+      const z = -5.08 + i * 2.02
+      return <group key={z}>
+        <Box position={[1.17, 2.1, z]} size={[.08, 3.95, 1.92]} color="#293b3b" />
+        <mesh position={[1.225, 2.1, z]} castShadow><boxGeometry args={[.035, 3.78, 1.72]} /><meshPhysicalMaterial color="#b7d4d0" metalness={.08} roughness={.12} transmission={.22} transparent opacity={.36} /></mesh>
+        <Box position={[1.25, .34, z]} size={[.1, .1, 1.74]} color="#3c544b" />
+        {[.75, 1.45, 2.15, 2.85].map((y, row) => <group key={y}>
+          <Box position={[1.24, y, z]} size={[.08, .035, 1.64]} color="#d9e0dc" />
+          {Array.from({ length: 5 }, (_, n) => <group key={n} position={[1.29, y + .22, z - .63 + n * .31]}>
+            <mesh castShadow><cylinderGeometry args={[.095, .095, .35, 18]} /><meshStandardMaterial color={['#e9e4d5','#b6d7db','#efd7b2','#e6d3cb'][Math.floor((n + row) % 4)]} roughness={.36} /></mesh>
+            <mesh position={[.052, 0, 0]}><boxGeometry args={[.015, .17, .14]} /><meshStandardMaterial color={['#738c6a','#7195a2','#b46c4f','#778caf'][n % 4]} /></mesh>
+          </group>)}
+        </group>)}
+        <Box position={[1.29, 3.92, z]} size={[.04, .09, 1.72]} color="#fff6e6" />
+      </group>
+    })}
+    <Box position={[.98, 4.38, 0]} size={[.38, .48, 12.5]} color="#25483a" />
+    <Text position={[.76, 4.38, 0]} rotation={[0, Math.PI / 2, 0]} fontSize={.28} color="#fff8e8" anchorX="center" anchorY="middle" fontWeight={700}>CHILLED · FRESH DAILY</Text>
   </group>
 }
 
@@ -165,9 +190,9 @@ function Store({ onSelect }) {
     <ambientLight intensity={.45} />
     <directionalLight position={[-7, 8, 6]} intensity={1.05} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-16} shadow-camera-right={16} shadow-camera-top={14} shadow-camera-bottom={-14} shadow-bias={-.00018} shadow-radius={5} />
     <group>
-      <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#b8b4aa" roughness={.7} /></mesh>
-      {Array.from({ length: 13 }, (_, i) => <Box key={`tile${i}`} position={[0, .006, -11.5 + i * 1.9]} size={[23.8, .012, .022]} color="#aaa59a" />)}
-      {Array.from({ length: 13 }, (_, i) => <Box key={`tilex${i}`} position={[-11.5 + i * 1.9, .006, 0]} size={[.022, .012, 25.8]} color="#aaa59a" />)}
+      <mesh position={[0, -.12, 0]} receiveShadow><boxGeometry args={[24, .24, 26]} /><meshStandardMaterial color="#aaa9a3" roughness={.27} metalness={.08} /></mesh>
+      {Array.from({ length: 13 }, (_, i) => <Box key={`tile${i}`} position={[0, .006, -11.5 + i * 1.9]} size={[23.8, .012, .018]} color="#96958f" />)}
+      {Array.from({ length: 13 }, (_, i) => <Box key={`tilex${i}`} position={[-11.5 + i * 1.9, .006, 0]} size={[.018, .012, 25.8]} color="#96958f" />)}
       <Box position={[0, 3.25, -12.6]} size={[24, 6.6, .35]} color="#f1eee6" />
       <Box position={[-12, 3.25, 0]} size={[.32, 6.5, 26]} color="#f1eee6" />
       <Box position={[12, 3.25, 0]} size={[.32, 6.5, 26]} color="#f1eee6" />
@@ -175,10 +200,11 @@ function Store({ onSelect }) {
       <Text position={[0, 2.66, -12.27]} fontSize={.62} color="#fff9ec" anchorX="center" anchorY="middle" fontWeight={800} letterSpacing={.08}>MARKET LANE</Text>
       <Text position={[0, 1.86, -12.26]} fontSize={.18} color="#d6e1d5" anchorX="center" anchorY="middle" letterSpacing={.16}>GOOD FOOD. GOOD DAYS.</Text>
       <Ceiling />
-      {[-4.1, 0, 4.1].map(x => <ShelfUnit key={x} x={x} onSelect={onSelect} />)}
+      <ColdAisle />
+      {[-3.8, 3.8].map(x => <ShelfUnit key={x} x={x} onSelect={onSelect} />)}
       <ProduceIsland onSelect={onSelect} />
       <Checkout />
-      {[-4.1, 0, 4.1].map((x, i) => <group key={`aisle${x}`} position={[x, 3.05, -7.1]}>
+      {[-3.8, 3.8].map((x, i) => <group key={`aisle${x}`} position={[x, 3.05, -7.1]}>
         <Box position={[0, 0, 0]} size={[1.65, .55, .08]} color={['#d8bb72', '#c96c54', '#718c73'][i]} />
         <Text position={[0, 0, .055]} fontSize={.26} color="#fffdf3" anchorX="center" anchorY="middle" fontWeight={700}>0{i + 1}</Text>
       </group>)}
@@ -210,7 +236,7 @@ export default function StoreScene({ onSelect }) {
     window.addEventListener('store-nudge', moveView)
     return () => window.removeEventListener('store-nudge', moveView)
   }, [])
-  return <Canvas shadows camera={{ position: [0, 3.8, 11.2], fov: 48, near: .1, far: 80 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}>
-    <Suspense fallback={null}><Store onSelect={onSelect} /><OrbitControls ref={controls} makeDefault target={[0, 1.45, -1.6]} minDistance={4.2} maxDistance={20} minPolarAngle={.32} maxPolarAngle={1.48} enableDamping dampingFactor={.075} maxAzimuthAngle={.8} minAzimuthAngle={-.8} /></Suspense>
+  return <Canvas shadows camera={{ position: [0, 1.8, 10.8], fov: 58, near: .1, far: 80 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}>
+    <Suspense fallback={null}><Store onSelect={onSelect} /><OrbitControls ref={controls} makeDefault target={[0, 1.65, -4.8]} minDistance={3} maxDistance={19} minPolarAngle={.75} maxPolarAngle={1.48} enableDamping dampingFactor={.075} maxAzimuthAngle={.72} minAzimuthAngle={-.72} /></Suspense>
   </Canvas>
 }
